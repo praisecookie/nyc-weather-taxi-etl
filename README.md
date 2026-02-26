@@ -17,6 +17,9 @@ This project is built using a modern, lightweight, and highly performant data st
 - **DuckDB:** An ultra-fast, in-process analytical SQL database. Used as the central data warehouse to join massive historical batch data with real-time micro-batches.
 - **Pandas & PyArrow:** Used for heavy-duty data transformation, cleaning, and reading highly compressed columnar data (`.parquet`).
 - **OpenWeatherMap API:** External live data source for real-time environmental context.
+- **FastAPI & Uvicorn:** The lightning-fast web framework and server used to deploy the pricing engine as a production-ready REST API for software engineering teams.
+- **Streamlit:** Used to rapidly prototype the interactive Business Intelligence (BI) dashboard and pricing simulator for stakeholders.
+- **Plotly:** The interactive graphing library used to visualize historical surge patterns and ride volumes.
 
 ## ⚙️ Key Features
 
@@ -24,6 +27,8 @@ This project is built using a modern, lightweight, and highly performant data st
 2. **Big Data Batch Loading:** A scalable ingestion script capable of processing and cleaning millions of historical trip records using Parquet files and DuckDB in seconds.
 3. **Data Analytics & Aggregation:** SQL-based analytics to identify baseline surge patterns (e.g., top 5 busiest hours of the day and their impact on average fares).
 4. **Dynamic Pricing Engine:** A simulated backend endpoint that calculates instant fare multipliers based on combined rulesets (current time vs. historical rush hours + live weather conditions).
+5. **Interactive Executive Dashboard:** A Streamlit-powered BI tool featuring Plotly visualizations of 2.8 million rides to help Product Owners identify historical rush hour patterns.
+6. **Production REST API:** A FastAPI endpoint (with auto-generated Swagger UI documentation) that accepts ride requests and returns live, JSON-formatted surge pricing payloads for mobile app integration.
 
 ## 📂 Project Structure
 
@@ -35,6 +40,7 @@ nyc-weather-taxi-etl/
 │ └── nyc_warehouse.db      # The live DuckDB analytical database
 │
 ├── src/
+│ ├── api.py                # FastAPI drive-thru window endpoint
 │ ├── extract.py            # API connection and data retrieval
 │ ├── transform.py          # Pandas data cleaning and formatting
 │ ├── load.py               # Database insertion logic
@@ -42,6 +48,7 @@ nyc-weather-taxi-etl/
 │ ├── analyze.py            # SQL aggregations and pattern discovery
 │ └── pricing_engine.py     # The final business-logic endpoint
 │
+├── app.py                  #Streamlit executive dashboard & simulator
 ├── pipeline.py             # The main Prefect orchestrator flow
 ├── .env                    # Hidden environment variables (API Keys)
 ├── .gitignore              # Security and version control rules
@@ -57,7 +64,7 @@ git clone https://github.com/YOUR_USERNAME/nyc-weather-taxi-etl.git
 cd nyc-weather-taxi-etl
 python3 -m venv venv
 source venv/bin/activate
-pip install pandas pyarrow duckdb prefect requests python-dotenv
+pip install pandas pyarrow duckdb prefect requests python-dotenv fastapi uvicorn streamlit plotly
 ```
 
 **2. Configure Secrets:**
@@ -78,6 +85,20 @@ python pipeline.py
 ```bash
 python src/pricing_engine.py
 ```
+
+**5. Launch the Executive Dashboard (Streamlit):**
+
+```bash
+streamlit run app.py
+```
+
+**6. Start the Production API Server (FastAPI):**
+
+```bash
+uvicorn src.api:app --reload
+```
+
+_(Then visit http://127.0.0.1:8000/docs to test the API via Swagger UI)_
 
 ## 👤 Author
 
